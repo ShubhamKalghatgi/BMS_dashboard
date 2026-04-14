@@ -2,57 +2,43 @@
 <html>
 <head>
   <title>Live Temperature</title>
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin-top: 50px;
-    }
-    .card {
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-      display: inline-block;
-    }
-    .temp {
-      font-size: 40px;
-      color: #ff5733;
-    }
-  </style>
 </head>
 <body>
 
-<h1>🌡 Live Temperature Monitor</h1>
-
-<div class="card">
-  <div id="temp" class="temp">Loading...</div>
-  <div id="time"></div>
-</div>
+<h1>🌡 Live Temperature</h1>
+<h2 id="temp">Loading...</h2>
+<p id="time"></p>
 
 <script>
 const CHANNEL_ID = "3340711";
+const READ_API_KEY = "RJ2R0JGM9PFKAMLD";
 
-const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?results=1`;
+const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=1`;
 
 async function getData() {
   try {
-    const res = await fetch(url);
-    const data = await res.json();
+    const response = await fetch(url);
+    const data = await response.json();
 
     const latest = data.feeds[0];
 
-    document.getElementById("temp").innerText =
-      latest.field1 + " °C";
+    if (latest) {
+      document.getElementById("temp").innerText =
+        latest.field1 + " °C";
 
-    document.getElementById("time").innerText =
-      "Updated: " + new Date(latest.created_at).toLocaleString();
+      document.getElementById("time").innerText =
+        "Updated: " + new Date(latest.created_at).toLocaleString();
+    } else {
+      document.getElementById("temp").innerText = "No data yet";
+    }
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
+    document.getElementById("temp").innerText = "Error fetching data";
   }
 }
 
-// fetch every 15 sec
+// refresh every 15 sec
 setInterval(getData, 15000);
 getData();
 </script>
