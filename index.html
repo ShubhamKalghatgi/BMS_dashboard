@@ -12,20 +12,30 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-/* ===== KEEPING YOUR ORIGINAL UI EXACT ===== */
 body {
   background: #f0f2f0;
   font-family: 'Space Mono', monospace;
   margin: 0;
 }
 
-/* Simple clean styling (trimmed but same feel) */
 header {
   padding: 15px 25px;
   background: white;
   border-bottom: 2px solid #3DCD58;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  margin: 0 12px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+}
+
+nav a:hover {
+  color: #3DCD58;
 }
 
 .cards {
@@ -56,7 +66,17 @@ header {
 <body>
 
 <header>
+  <!-- LEFT -->
   <h2>BMS Dashboard</h2>
+
+  <!-- CENTER TABS -->
+  <nav>
+    <a href="index.html" style="color:#3DCD58;">Dashboard</a>
+    <a href="page2.html">Page 2</a>
+    <a href="page3.html">Page 3</a>
+  </nav>
+
+  <!-- RIGHT -->
   <div id="headerTime">--</div>
 </header>
 
@@ -118,7 +138,6 @@ async function loadData() {
 
     const latest = feeds[feeds.length - 1];
 
-    // update cards
     document.getElementById("valTemp").innerText = latest.field1 || "--";
     document.getElementById("valHum").innerText = latest.field2 || "--";
     document.getElementById("valCO2").innerText = latest.field3 || "--";
@@ -126,7 +145,6 @@ async function loadData() {
     document.getElementById("headerTime").innerText =
       new Date(latest.created_at).toLocaleString();
 
-    // update chart
     chart.data.labels = feeds.map(f => new Date(f.created_at).toLocaleTimeString());
     chart.data.datasets[0].data = feeds.map(f => f.field1);
     chart.data.datasets[1].data = feeds.map(f => f.field2);
