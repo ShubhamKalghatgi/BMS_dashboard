@@ -13,11 +13,14 @@
 const CHANNEL_ID = "3340711";
 const READ_API_KEY = "RJ2R0JGM9PFKAMLD";
 
-const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=1`;
+// ✅ Prevent caching so new data always loads
+function getURL() {
+  return `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=1&_=${new Date().getTime()}`;
+}
 
 async function getData() {
   try {
-    const response = await fetch(url);
+    const response = await fetch(getURL());
     const data = await response.json();
 
     const latest = data.feeds[0];
@@ -28,18 +31,17 @@ async function getData() {
 
       document.getElementById("time").innerText =
         "Updated: " + new Date(latest.created_at).toLocaleString();
-    } else {
-      document.getElementById("temp").innerText = "No data yet";
     }
 
   } catch (error) {
-    console.error(error);
-    document.getElementById("temp").innerText = "Error fetching data";
+    console.error("Error:", error);
   }
 }
 
-// refresh every 15 sec
+// ✅ Auto-refresh every 15 seconds
 setInterval(getData, 15000);
+
+// initial load
 getData();
 </script>
 
